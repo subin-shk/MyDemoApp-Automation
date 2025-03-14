@@ -1,0 +1,16 @@
+{
+  "checkoutDetails": {
+    "fullName": "Rebecca Winter",
+    "addressLine1": "Paknajol",
+    "city": "Kathmandu",
+    "state": "Bagmati",
+    "zipCode": "89750",
+    "country": "Nepal"
+  },
+  "paymentDetails": {
+    "fullName": "Rebecca Winter",
+    "cardNumber": "2345431244542343",
+    "expireDate": "03/25",
+    "securityCode": "321"
+  }
+}

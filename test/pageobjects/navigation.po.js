@@ -18,6 +18,12 @@ class Navigation {
     );
   }
 
+  get webView() {
+    return $(
+      '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/itemTV" and @text="WebView"]'
+    );
+  }
+
   get login() {
     return $("~Login Menu Item");
   }
@@ -30,6 +36,28 @@ class Navigation {
 
   get cart() {
     return $("id:com.saucelabs.mydemoapp.android:id/cartIV");
+  }
+
+  get sort() {
+    return $(
+      "~Shows current sorting order and displays available sorting options"
+    );
+  }
+
+  get nameAscending() {
+    return $('//android.widget.TextView[@text="Name - Ascending"]');
+  }
+
+  get nameDescending() {
+    return $('//android.widget.TextView[@text="Name - Descending"]');
+  }
+
+  get priceAscending() {
+    return $('//android.widget.TextView[@text="Price - Ascending"]');
+  }
+
+  get priceDescending() {
+    return $('//android.widget.TextView[@text="Price - Descending"]');
   }
 
   async gotoMenu() {

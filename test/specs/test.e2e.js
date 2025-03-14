@@ -1,11 +1,17 @@
 const { expect, browser } = require("@wdio/globals");
 const LoginPage = require("../pageobjects/login.page");
 const Navigation = require("../pageobjects/navigation.po");
+const Catalog = require("../pageobjects/catalog.po");
+const Checkout = require("../pageobjects/checkout.po");
+const WebView = require("../pageobjects/webView.po");
+const Payment = require("../pageobjects/payment.po");
 const SecurePage = require("../pageobjects/secure.page");
 const testData = require("../../fixtures/loginFixtures.json");
+const webData = require("../../fixtures/webViewFixtures.json");
+const checkoutData = require("../../fixtures/checkoutFixtures.json");
 
 describe("My Demo App", () => {
-  it("should login with valid credentials", async () => {
+  before(async () => {
     // browser.pause(7000);
     await Navigation.open();
 
@@ -19,6 +25,38 @@ describe("My Demo App", () => {
     );
 
     // browser.pause(5000);
+  });
+
+  it("should sort by - and scroll", async () => {
+    await Navigation.sort.click();
+    await Navigation.priceAscending.click();
+    await browser.performActions([
+      {
+        type: "pointer",
+        id: "finger1",
+        parameters: { pointerType: "touch" },
+        actions: [
+          {
+            type: "pointerMove",
+            duration: 0,
+            x: 500,
+            y: 1800,
+            origin: "viewport",
+          },
+          { type: "pointerDown", button: 0 },
+
+          {
+            type: "pointerMove",
+            duration: 1000,
+            x: 500,
+            y: 200,
+            origin: "viewport",
+          },
+
+          { type: "pointerUp", button: 0 },
+        ],
+      },
+    ]);
   });
 
   it("should go to drawing and draw a rectangle", async () => {
@@ -170,19 +208,64 @@ describe("My Demo App", () => {
     ]);
     await $("id:com.saucelabs.mydemoapp.android:id/clearBtn").click();
   });
+  it("should go to drawing and draw a circle ", async () => {
+    await Navigation.open();
+    await Navigation.drawing.click();
+
+    await browser.pause(3000);
+
+    const centerX = 600;
+    const centerY = 1100;
+    const radius = 200;
+    const steps = 100;
+
+    let actions = [
+      {
+        type: "pointer",
+        id: "finger1",
+        parameters: { pointerType: "touch" },
+        actions: [],
+      },
+    ];
+
+    for (let i = 0; i <= steps; i++) {
+      let angle = (i / steps) * 2 * Math.PI;
+      let x = Math.round(centerX + radius * Math.cos(angle));
+      let y = Math.round(centerY + radius * Math.sin(angle));
+
+      if (i === 0) {
+        actions[0].actions.push({
+          type: "pointerMove",
+          duration: 0,
+          x,
+          y,
+          origin: "viewport",
+        });
+        actions[0].actions.push({ type: "pointerDown", button: 0 });
+      } else {
+        actions[0].actions.push({
+          type: "pointerMove",
+          duration: 50,
+          x,
+          y,
+          origin: "viewport",
+        });
+      }
+    }
+
+    actions[0].actions.push({ type: "pointerUp", button: 0 });
+
+    await browser.performActions(actions);
+
+    await $("id:com.saucelabs.mydemoapp.android:id/clearBtn").click();
+  });
 
   it("should navigate to catalogue and select first item and put it to cart", async () => {
     await Navigation.open();
     await Navigation.catalog.click();
-    bag1 = await $(
-      '(//android.widget.ImageView[@content-desc="Product Image"])[1]'
-    );
-    await bag1.click();
-    fiveStar = await $("id:com.saucelabs.mydemoapp.android:id/start5IV");
-    await fiveStar.click();
-    closeDialogueBox = await $("~Closes review dialog");
-
-    await closeDialogueBox.click();
+    await Catalog.bag1.click();
+    await Catalog.fiveStar.click();
+    await Catalog.closeDialogBox.click();
 
     async function scrollUntilElementIsVisible(element, maxSwipes = 5) {
       let isElementVisible = await element.isDisplayed().catch(() => false);
@@ -228,14 +311,60 @@ describe("My Demo App", () => {
       await element.click();
     }
 
-    // Locate "Picker" and scroll to it
-    const myElement = await $("~Tap to add product to cart");
+    const myElement = await Catalog.addToCart;
     await scrollUntilElementIsVisible(myElement);
 
     await browser.pause(2000);
   });
   it("should go to cart", async () => {
     await Navigation.cart.click();
-    await browser.back();
+    // await browser.back();
+  });
+
+  it("should fill in checkout details and go to payment", async () => {
+    await Checkout.toCheckout.click();
+    await Checkout.fullName.setValue(checkoutData.checkoutDetails.fullName);
+    await Checkout.addressLine1.setValue(
+      checkoutData.checkoutDetails.addressLine1
+    );
+    await Checkout.city.setValue(checkoutData.checkoutDetails.city);
+    await Checkout.state.setValue(checkoutData.checkoutDetails.state);
+    await Checkout.zipCode.setValue(checkoutData.checkoutDetails.zipCode);
+    await Checkout.country.setValue(checkoutData.checkoutDetails.country);
+    await Checkout.toPayment.click();
+  });
+
+  it("should fill in payment details and place order", async () => {
+    await browser.pause(2000);
+    await Payment.fullName.setValue(checkoutData.paymentDetails.fullName);
+    await Payment.cardNumber.setValue(checkoutData.paymentDetails.cardNumber);
+    await Payment.expireDate.setValue(checkoutData.paymentDetails.expireDate);
+    await Payment.securityCode.setValue(
+      checkoutData.paymentDetails.securityCode
+    );
+    await Payment.reviewOrder.click();
+    await Payment.placeOrder.click();
+    await Payment.continueShopping.click();
+    await browser.pause(5000);
+  });
+
+  it.only("should go to webview and search", async () => {
+    await Navigation.open();
+    await Navigation.webView.click();
+    await WebView.webViewInput.click();
+    await WebView.webViewInput.setValue(webData.google.url);
+    await WebView.goToSite.waitForExist({ timeout: 5000 });
+    await WebView.goToSite.click();
+
+    await browser.pause(7000);
+    await WebView.googleSearch.setValue(webData.google.search);
+    // await WebView.searchBtn.click();
+    
+    // await WebView.goog8leSearchInput.waitForDisplayed({ timeout: 5000 });
+    // await WebView.googleSearchInput.waitForEnabled({ timeout: 5000 });
+    // await WebView.googleSearchInput.addValue(webData.google.search);
+    await browser.keys("Enter"); // or "\n"
+
+    await browser.pause(5000);
   });
 });
