@@ -28,5 +28,11 @@ class Catalog {
   get continueShopping() {
     return $("~Tap to open catalog");
   }
+
+  get checkoutComplete() {
+    return $(
+      '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/completeTV"]'
+    );
+  }
 }
 module.exports = new Catalog();

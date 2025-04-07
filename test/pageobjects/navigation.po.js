@@ -17,6 +17,16 @@ class Navigation {
       '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/itemTV" and @text="Catalog"]'
     );
   }
+  get fingerPrint() {
+    return $(
+      '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/itemTV" and @text="FingerPrint"]'
+    );
+  }
+  get fingerPrintToggle() {
+    return $(
+      '//android.widget.Switch[@content-desc="Enable or disable biometric login"]'
+    );
+  }
 
   get webView() {
     return $(
@@ -26,6 +36,12 @@ class Navigation {
 
   get login() {
     return $("~Login Menu Item");
+  }
+  get logout() {
+    return $("~Logout Menu Item");
+  }
+  get logoutConfirm() {
+    return $('//android.widget.Button[@resource-id="android:id/button1"]');
   }
 
   get drawing() {

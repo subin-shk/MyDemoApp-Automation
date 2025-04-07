@@ -22,5 +22,9 @@ class Catalog{
   get addToCart() {
     return $("~Tap to add product to cart");
   }
+
+  get cartCount(){
+    return $('//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/cartTV"]')
+  }
 }
 module.exports = new Catalog();

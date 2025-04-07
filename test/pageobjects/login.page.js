@@ -15,6 +15,11 @@ class LoginPage {
   get inputPassword() {
     return $("id:com.saucelabs.mydemoapp.android:id/passwordET");
   }
+  get fingerPrintScan() {
+    return $(
+      '//android.widget.ImageButton[@content-desc="Tap to login using biometric verification"]'
+    );
+  }
 
   get btnSubmit() {
     return $("~Tap to login with given credentials");

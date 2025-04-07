@@ -1,4 +1,5 @@
 const { expect, browser } = require("@wdio/globals");
+const { remote } = require("webdriverio");
 const LoginPage = require("../pageobjects/login.page");
 const Navigation = require("../pageobjects/navigation.po");
 const Catalog = require("../pageobjects/catalog.po");
@@ -12,17 +13,22 @@ const checkoutData = require("../../fixtures/checkoutFixtures.json");
 
 describe("My Demo App", () => {
   before(async () => {
+    await driver.startRecordingScreen();
     // browser.pause(7000);
     await Navigation.open();
 
-    // await browser.pause(3000);
-    await Navigation.login.click();
+    try {
+      const isLoginButtonDisplayed = await Navigation.login.isDisplayed();
+      expect(isLoginButtonDisplayed).toBe(true);
+      await Navigation.login.click();
 
-    // await browser.pause(2000);
-    await LoginPage.login(
-      testData.validUser.userName,
-      testData.validUser.password
-    );
+      await LoginPage.login(
+        testData.validUser.userName,
+        testData.validUser.password
+      );
+    } catch (error) {
+      console.log("Login button is not displayed. Error: ", error);
+    }
 
     // browser.pause(5000);
   });
@@ -30,6 +36,10 @@ describe("My Demo App", () => {
   it("should sort by - and scroll", async () => {
     await Navigation.sort.click();
     await Navigation.priceAscending.click();
+
+    const currentSort = await Navigation.priceAscending.getText();
+    expect(currentSort).toBe("Price: Low to High");
+
     await browser.performActions([
       {
         type: "pointer",
@@ -117,6 +127,11 @@ describe("My Demo App", () => {
         ],
       },
     ]);
+    const isClearButtonVisible = await $(
+      "id:com.saucelabs.mydemoapp.android:id/clearBtn"
+    ).isDisplayed();
+    expect(isClearButtonVisible).toBe(true);
+
     await $("id:com.saucelabs.mydemoapp.android:id/clearBtn").click();
   });
 
@@ -206,6 +221,11 @@ describe("My Demo App", () => {
         ],
       },
     ]);
+    const isClearButtonVisible = await $(
+      "id:com.saucelabs.mydemoapp.android:id/clearBtn"
+    ).isDisplayed();
+    expect(isClearButtonVisible).toBe(true);
+
     await $("id:com.saucelabs.mydemoapp.android:id/clearBtn").click();
   });
   it("should go to drawing and draw a circle ", async () => {
@@ -314,8 +334,12 @@ describe("My Demo App", () => {
     const myElement = await Catalog.addToCart;
     await scrollUntilElementIsVisible(myElement);
 
+    const cartCount = await Catalog.cartCount.getText();
+    expect(parseInt(cartCount)).toBeGreaterThan(0);
+
     await browser.pause(2000);
   });
+
   it("should go to cart", async () => {
     await Navigation.cart.click();
     // await browser.back();
@@ -344,11 +368,32 @@ describe("My Demo App", () => {
     );
     await Payment.reviewOrder.click();
     await Payment.placeOrder.click();
+
+    const checkoutComplete = await Payment.checkoutComplete.getText();
+    expect(checkoutComplete).toContain("Checkout Complete");
+
     await Payment.continueShopping.click();
     await browser.pause(5000);
   });
 
-  it.only("should go to webview and search", async () => {
+  it.only("should logout", async () => {
+    await Navigation.open();
+    await Navigation.logout.click();
+    await Navigation.logoutConfirm.click();
+  });
+
+  it.only("should go to fingerpint and turn finger option on and be able to login with fingerprint", async () => {
+    await Navigation.open();
+    await Navigation.fingerPrint.click();
+    await Navigation.fingerPrintToggle.click();
+
+    await Navigation.open();
+    await Navigation.login.click();
+    await LoginPage.fingerPrintScan.click();
+    await browser.pause(7000);
+  });
+
+  it("should go to webview and search", async () => {
     await Navigation.open();
     await Navigation.webView.click();
     await WebView.webViewInput.click();
@@ -358,13 +403,23 @@ describe("My Demo App", () => {
 
     await browser.pause(7000);
     await WebView.googleSearch.setValue(webData.google.search);
-    // await WebView.searchBtn.click();
-    
+    await WebView.searchBtn.click();
+
     // await WebView.goog8leSearchInput.waitForDisplayed({ timeout: 5000 });
     // await WebView.googleSearchInput.waitForEnabled({ timeout: 5000 });
     // await WebView.googleSearchInput.addValue(webData.google.search);
     await browser.keys("Enter"); // or "\n"
 
     await browser.pause(5000);
+  });
+
+  after(async () => {
+  
+    const video = await driver.stopRecordingScreen();
+
+    const fs = require("fs");
+    fs.writeFileSync("recording.mp4", Buffer.from(video, "base64"));
+
+    await driver.deleteSession();
   });
 });
