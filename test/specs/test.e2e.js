@@ -333,8 +333,6 @@ describe("My Demo App", () => {
 
     const cartCount = await Catalog.cartCount.getText();
     expect(parseInt(cartCount)).toBeGreaterThan(0);
-
-    
   });
 
   it("should go to cart", async () => {
@@ -425,7 +423,7 @@ describe("My Demo App", () => {
     const video = await driver.stopRecordingScreen();
 
     const fs = require("fs");
-    fs.writeFileSync("recording.mp4", Buffer.from(video, "base64"));
+    fs.writeFileSync("SubinRecording.mp4", Buffer.from(video, "base64"));
 
     await driver.deleteSession();
   });
