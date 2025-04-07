@@ -43,6 +43,11 @@ class Navigation {
   get logoutConfirm() {
     return $('//android.widget.Button[@resource-id="android:id/button1"]');
   }
+  get qrCodeScanner() {
+    return $(
+      '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/itemTV" and @text="QR Code Scanner"]'
+    );
+  }
 
   get drawing() {
     return $(

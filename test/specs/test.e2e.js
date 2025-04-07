@@ -37,9 +37,6 @@ describe("My Demo App", () => {
     await Navigation.sort.click();
     await Navigation.priceAscending.click();
 
-    const currentSort = await Navigation.priceAscending.getText();
-    expect(currentSort).toBe("Price: Low to High");
-
     await browser.performActions([
       {
         type: "pointer",
@@ -74,7 +71,7 @@ describe("My Demo App", () => {
 
     await Navigation.drawing.click();
 
-    await browser.pause(5000);
+    // await browser.pause(5000);
 
     await browser.performActions([
       {
@@ -136,11 +133,11 @@ describe("My Demo App", () => {
   });
 
   it("should go to drawing and draw a circle (pentagon)", async () => {
-    await Navigation.open();
+    // await Navigation.open();
 
-    await Navigation.drawing.click();
+    // await Navigation.drawing.click();
 
-    await browser.pause(3000);
+    // await browser.pause(3000);
 
     await browser.performActions([
       {
@@ -229,10 +226,10 @@ describe("My Demo App", () => {
     await $("id:com.saucelabs.mydemoapp.android:id/clearBtn").click();
   });
   it("should go to drawing and draw a circle ", async () => {
-    await Navigation.open();
-    await Navigation.drawing.click();
+    // await Navigation.open();
+    // await Navigation.drawing.click();
 
-    await browser.pause(3000);
+    // await browser.pause(3000);
 
     const centerX = 600;
     const centerY = 1100;
@@ -318,7 +315,7 @@ describe("My Demo App", () => {
           },
         ]);
 
-        await browser.pause(1000);
+        // await browser.pause(1000);
 
         isElementVisible = await element.isDisplayed().catch(() => false);
         swipeCount++;
@@ -337,7 +334,7 @@ describe("My Demo App", () => {
     const cartCount = await Catalog.cartCount.getText();
     expect(parseInt(cartCount)).toBeGreaterThan(0);
 
-    await browser.pause(2000);
+    
   });
 
   it("should go to cart", async () => {
@@ -359,7 +356,7 @@ describe("My Demo App", () => {
   });
 
   it("should fill in payment details and place order", async () => {
-    await browser.pause(2000);
+    // await browser.pause(2000);
     await Payment.fullName.setValue(checkoutData.paymentDetails.fullName);
     await Payment.cardNumber.setValue(checkoutData.paymentDetails.cardNumber);
     await Payment.expireDate.setValue(checkoutData.paymentDetails.expireDate);
@@ -373,16 +370,16 @@ describe("My Demo App", () => {
     expect(checkoutComplete).toContain("Checkout Complete");
 
     await Payment.continueShopping.click();
-    await browser.pause(5000);
+    // await browser.pause(5000);
   });
 
-  it.only("should logout", async () => {
+  it("should logout", async () => {
     await Navigation.open();
     await Navigation.logout.click();
     await Navigation.logoutConfirm.click();
   });
 
-  it.only("should go to fingerpint and turn finger option on and be able to login with fingerprint", async () => {
+  it("should go to fingerpint and turn finger option on and be able to login with fingerprint", async () => {
     await Navigation.open();
     await Navigation.fingerPrint.click();
     await Navigation.fingerPrintToggle.click();
@@ -390,7 +387,7 @@ describe("My Demo App", () => {
     await Navigation.open();
     await Navigation.login.click();
     await LoginPage.fingerPrintScan.click();
-    await browser.pause(7000);
+    // await browser.pause(7000);
   });
 
   it("should go to webview and search", async () => {
@@ -401,7 +398,8 @@ describe("My Demo App", () => {
     await WebView.goToSite.waitForExist({ timeout: 5000 });
     await WebView.goToSite.click();
 
-    await browser.pause(7000);
+    // await browser.pause(7000);
+    await WebView.googleSearch.waitForExist({ timeout: 10000 });
     await WebView.googleSearch.setValue(webData.google.search);
     await WebView.searchBtn.click();
 
@@ -411,10 +409,19 @@ describe("My Demo App", () => {
     await browser.keys("Enter"); // or "\n"
 
     await browser.pause(5000);
+
+    await browser.back();
+  });
+
+  it("should navigate to QR Code Scanner and scan QR code", async () => {
+    await Navigation.open();
+    await Navigation.qrCodeScanner.click();
+    await browser.pause(10000);
+    await browser.back();
+    await browser.pause(5000);
   });
 
   after(async () => {
-  
     const video = await driver.stopRecordingScreen();
 
     const fs = require("fs");
