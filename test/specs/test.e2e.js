@@ -11,26 +11,25 @@ const testData = require("../../fixtures/loginFixtures.json");
 const webData = require("../../fixtures/webViewFixtures.json");
 const checkoutData = require("../../fixtures/checkoutFixtures.json");
 
+const {
+  validLogin,
+  emptyUsernameLogin,
+  emptyPasswordLogin,
+} = require("./login.test");
+
 describe("My Demo App", () => {
   before(async () => {
     await driver.startRecordingScreen();
-    // browser.pause(7000);
-    await Navigation.open();
+  });
 
-    try {
-      const isLoginButtonDisplayed = await Navigation.login.isDisplayed();
-      expect(isLoginButtonDisplayed).toBe(true);
-      await Navigation.login.click();
-
-      await LoginPage.login(
-        testData.validUser.userName,
-        testData.validUser.password
-      );
-    } catch (error) {
-      console.log("Login button is not displayed. Error: ", error);
-    }
-
-    // browser.pause(5000);
+  it("should not login with empty username credentials", async () => {
+    await emptyUsernameLogin();
+  });
+  it("should not login with empty password credentials", async () => {
+    await emptyPasswordLogin();
+  });
+  it("should be able to login with valid credentials", async () => {
+    await validLogin();
   });
 
   it("should sort by - and scroll", async () => {
@@ -415,15 +414,15 @@ describe("My Demo App", () => {
     await Navigation.open();
     await Navigation.qrCodeScanner.click();
     await browser.pause(10000);
-    await browser.back();
-    await browser.pause(5000);
+    // await browser.back();
+    // await browser.pause(5000);
   });
 
   after(async () => {
     const video = await driver.stopRecordingScreen();
 
     const fs = require("fs");
-    fs.writeFileSync("SubinRecording.mp4", Buffer.from(video, "base64"));
+    fs.writeFileSync("recording.mp4", Buffer.from(video, "base64"));
 
     await driver.deleteSession();
   });

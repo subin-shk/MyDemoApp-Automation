@@ -15,6 +15,18 @@ class LoginPage {
   get inputPassword() {
     return $("id:com.saucelabs.mydemoapp.android:id/passwordET");
   }
+
+  get emptyUsernameError() {
+    return $(
+      '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/nameErrorTV"]'
+    );
+  }
+  get emptyPasswordError() {
+    return $(
+      '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/passwordErrorTV"]'
+    );
+  }
+
   get fingerPrintScan() {
     return $(
       '//android.widget.ImageButton[@content-desc="Tap to login using biometric verification"]'

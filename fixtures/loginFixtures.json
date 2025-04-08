@@ -2,5 +2,13 @@
   "validUser": {
     "userName": "hero",
     "password": "hero123"
+  },
+  "emptyUsername": {
+    "userName": "",
+    "password": "hero123"
+  },
+  "emptyPassword": {
+    "userName": "hero",
+    "password": ""
   }
 }
