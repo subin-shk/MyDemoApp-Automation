@@ -298,4 +298,24 @@ exports.config = {
    */
   // afterAssertion: function(params) {
   // }
+
+  // capture ss of test failures
+  afterTest: async function (
+    test,
+    context,
+    { error, result, duration, passed, retries }
+  ) {
+    console.log(`🔎 Finished: ${test.title}`);
+    console.log(`✅ Passed: ${passed}`);
+    console.log(`⏱️ Duration: ${duration} ms`);
+    console.log(`🔁 Retry: ${retries.attempts}/${retries.limit}`);
+
+    if (!passed) {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const fileName = `./errorShots/${test.title}-${timestamp}.png`;
+      await browser.saveScreenshot(fileName);
+      console.error(`Test failed. Screenshot saved at: ${fileName}`);
+      console.error(`Error: ${error?.message}`);
+    }
+  },
 };
