@@ -1,6 +1,9 @@
 const { $ } = require("@wdio/globals");
 
-class Catalog{
+class Catalog {
+  get catalogTitle() {
+    return $('//android.widget.TextView[@content-desc="title"]');
+  }
   get bag1() {
     return $('(//android.widget.ImageView[@content-desc="Product Image"])[1]');
   }
@@ -23,8 +26,10 @@ class Catalog{
     return $("~Tap to add product to cart");
   }
 
-  get cartCount(){
-    return $('//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/cartTV"]')
+  get cartCount() {
+    return $(
+      '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/cartTV"]'
+    );
   }
 }
 module.exports = new Catalog();

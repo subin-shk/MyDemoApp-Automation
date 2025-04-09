@@ -1,6 +1,12 @@
 const { $ } = require("@wdio/globals");
 
 class Catalog {
+  get paymentMethod() {
+    return $(
+      '//android.widget.TextView[@resource-id="com.saucelabs.mydemoapp.android:id/enterPaymentMethodTV"]'
+    );
+  }
+
   get fullName() {
     return $("id:com.saucelabs.mydemoapp.android:id/nameET");
   }

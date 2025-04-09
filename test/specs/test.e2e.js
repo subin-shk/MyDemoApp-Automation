@@ -350,6 +350,9 @@ describe("My Demo App", () => {
     await Checkout.zipCode.setValue(checkoutData.checkoutDetails.zipCode);
     await Checkout.country.setValue(checkoutData.checkoutDetails.country);
     await Checkout.toPayment.click();
+
+    const paymentRedirect = await Payment.paymentMethod.getText();
+    expect(paymentRedirect).toContain("Enter a payment method");
   });
 
   it("should fill in payment details and place order", async () => {
@@ -384,6 +387,9 @@ describe("My Demo App", () => {
     await Navigation.open();
     await Navigation.login.click();
     await LoginPage.fingerPrintScan.click();
+
+    const catalogTitle = await Catalog.catalogTitle.getText();
+    expect(catalogTitle).toContain("Products");
     // await browser.pause(7000);
   });
 

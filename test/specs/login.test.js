@@ -43,7 +43,7 @@ async function emptyPasswordLogin() {
   );
 
   const errorMessage = await LoginPage.emptyPasswordError.getText();
-  expect(errorMessage).toContain("Password is required");
+  expect(errorMessage).toContain("Enter Password");
 }
 
 module.exports = {
