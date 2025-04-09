@@ -349,7 +349,55 @@ describe("My Demo App", () => {
     await Checkout.state.setValue(checkoutData.checkoutDetails.state);
     await Checkout.zipCode.setValue(checkoutData.checkoutDetails.zipCode);
     await Checkout.country.setValue(checkoutData.checkoutDetails.country);
-    await Checkout.toPayment.click();
+
+    async function scrollUntilElementIsVisible(element, maxSwipes = 5) {
+      let isElementVisible = await element.isDisplayed().catch(() => false);
+      let swipeCount = 0;
+
+      while (!isElementVisible && swipeCount < maxSwipes) {
+        await browser.performActions([
+          {
+            type: "pointer",
+            id: "finger1",
+            parameters: { pointerType: "touch" },
+            actions: [
+              {
+                type: "pointerMove",
+                duration: 0,
+                x: 500,
+                y: 1500,
+                origin: "viewport",
+              },
+              { type: "pointerDown", button: 0 },
+              {
+                type: "pointerMove",
+                duration: 500,
+                x: 500,
+                y: 500,
+                origin: "viewport",
+              },
+              { type: "pointerUp", button: 0 },
+            ],
+          },
+        ]);
+
+        // await browser.pause(1000);
+
+        isElementVisible = await element.isDisplayed().catch(() => false);
+        swipeCount++;
+      }
+
+      if (!isElementVisible) {
+        throw new Error("Element not found after scrolling!");
+      }
+
+      await element.click();
+    }
+
+    const myElement = await Checkout.toPayment;
+    await scrollUntilElementIsVisible(myElement);
+
+    // await Checkout.toPayment.click();
 
     const paymentRedirect = await Payment.paymentMethod.getText();
     expect(paymentRedirect).toContain("Enter a payment method");
